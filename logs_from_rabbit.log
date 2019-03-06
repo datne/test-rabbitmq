@@ -1,0 +1,17 @@
+ [*] Waiting for logs. To exit press CTRL+C
+ [x] {"id":0,"task":"sleep","sleep_period":1}
+ [x] {"id":1,"task":"sleep","sleep_period":2}
+ [x] {"id":2,"task":"sleep","sleep_period":2}
+ [x] {"id":3,"task":"sleep","sleep_period":3}
+ [x] {"id":4,"task":"sleep","sleep_period":1}
+ [x] {"id":5,"task":"sleep","sleep_period":2}
+ [x] {"id":6,"task":"sleep","sleep_period":2}
+ [x] {"id":7,"task":"sleep","sleep_period":2}
+ [x] {"id":8,"task":"sleep","sleep_period":2}
+ [x] {"id":9,"task":"sleep","sleep_period":1}
+ [x] {"id":10,"task":"sleep","sleep_period":2}
+ [x] {"id":11,"task":"sleep","sleep_period":2}
+ [x] {"id":12,"task":"sleep","sleep_period":1}
+ [x] {"id":13,"task":"sleep","sleep_period":2}
+ [x] {"id":14,"task":"sleep","sleep_period":0}
+ [x] {"id":15,"task":"sleep","sleep_period":1}
