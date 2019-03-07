@@ -10,28 +10,14 @@ $channel = $connection->channel();
 //declare queue 'rpc_queue'
 $channel->queue_declare('rpc_queue', false, false, false, false);
 
-function fib($n)
-{
-	if ($n == 0) {
-		return 0;
-	}
-	if ($n == 1) {
-		return 1;
-	}
-	return fib($n-1) + fib($n-2);
-}
-
 echo " [x] Awaiting RPC requests\n";
 
 $callback = function ($req) {
-	$n = intval($req->body);
-	echo ' [.] fib(', $n, ")\n";
 
-	$msg = new AMQPMessage(
-		(string) fib($n),
-		array('correlation_id' => $req->get('correlation_id'))
-	);
-	$req->delivery_info['channel']->basic_publish($msg,'',$req->get('reply_to'));
+	echo 'Đã xử lý '.$req->get('correlation_id'),"\n";
+
+	$msg = new AMQPMessage('Trả về cho: '.$req->get('reply_to') .'-'.$req->body,['correlation_id' => $req->get('correlation_id')]);
+	$req->delivery_info['channel']->basic_publish($msg,'',$req->get('reply_to')/*key_routing(match vs $callback_queue (rpc_client.php))*/);
 	$req->delivery_info['channel']->basic_ack($req->delivery_info['delivery_tag']);
 };
 

@@ -4,7 +4,7 @@ require_once __DIR__ . '/vendor/autoload.php';
 use PhpAmqpLib\Connection\AMQPStreamConnection;
 use PhpAmqpLib\Message\AMQPMessage;
 
-class FibonacciRpcClient
+class TestRpcSender
 {
 	private $connection;
 	private $channel;
@@ -16,25 +16,8 @@ class FibonacciRpcClient
 	{
 		$this->connection = new AMQPStreamConnection('localhost',5672,'guest','guest');
 		$this->channel = $this->connection->channel();
-		list($this->callback_queue, ,) = $this->channel->queue_declare(
-			"",
-			false,
-			false,
-			true,
-			false
-		);
-		$this->channel->basic_consume(
-			$this->callback_queue,
-			'',
-			false,
-			true,
-			false,
-			false,
-			array(
-				$this,
-				'onResponse'
-			)
-		);
+		list($this->callback_queue, ,) = $this->channel->queue_declare("",false,false,true,false);
+		$this->channel->basic_consume($this->callback_queue,'',false,true,false,false,[$this,'onResponse']);
 	}
 
 	public function onResponse($rep)
@@ -49,22 +32,18 @@ class FibonacciRpcClient
 		$this->response = null;
 		$this->corr_id = uniqid();
 
-		$msg = new AMQPMessage(
-			(string) $n,
-			array(
-				'correlation_id' => $this->corr_id,
-				'reply_to' => $this->callback_queue
-			)
-		);
+		$msg = new AMQPMessage($n,['correlation_id' => $this->corr_id,'reply_to' => $this->callback_queue]);
+
 		$this->channel->basic_publish($msg, '', 'rpc_queue');
 		while (!$this->response) {
 			$this->channel->wait();
 		}
-		return intval($this->response);
+		return $this->response;
 	}
 }
 
-$fibonacci_rpc = new FibonacciRpcClient();
-$response = $fibonacci_rpc->call(30);
-echo ' [.] Got ', $response, "\n";
+$fibonacci_rpc = new TestRpcSender();
+
+$response = $fibonacci_rpc->call('Album/2');
+echo $response, "\n";
 ?>
